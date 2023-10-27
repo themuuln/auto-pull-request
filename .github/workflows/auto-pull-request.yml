@@ -2,7 +2,7 @@ name: Auto Pull Request
 
 on:
   schedule:
-    - cron: "0 */4 * * *"
+    - cron: "*/5 * * * *"
 
 jobs:
   auto_pull_request:
@@ -14,21 +14,16 @@ jobs:
       - name: Create Empty Pull Request
         run: |
           cd $GITHUB_WORKSPACE
-          branch="main"  # Change this to the target branch
+          branch="main"  
 
-          # Generate a unique branch name
           branch_name="auto-pull-request-$(date +%s)"
 
-          # Create a new branch
           git checkout -b $branch_name
 
-          # Create an empty commit to trigger a pull request
           git commit --allow-empty -m "Auto Pull Request Trigger"
 
-          # Push the new branch to the repository
           git push origin $branch_name
 
-          # Create the pull request
           hub pull-request -m "Automated Pull Request" -b $branch -h $branch_name
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
