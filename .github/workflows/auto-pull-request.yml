@@ -2,7 +2,7 @@ name: Auto Pull Request with Merge
 
 on:
   schedule:
-    - cron: "0 */4 * * *" # Adjust the schedule as needed
+    - cron: "*/5 * * * *" # Adjust the schedule as needed
 
 jobs:
   auto_pull_request:
