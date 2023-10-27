@@ -42,7 +42,6 @@ jobs:
           # Create the pull request
           pr_url=$(hub pull-request -m "Automated Pull Request" -b $branch -h $branch_name)
 
-          # Merge the pull request
           hub api -X PUT $pr_url/merge
 
         env:
