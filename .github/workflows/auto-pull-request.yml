@@ -1,4 +1,4 @@
-name: Auto Pull Request
+name: Auto Pull Request with Merge
 
 on:
   schedule:
@@ -15,6 +15,12 @@ jobs:
         run: |
           git config user.name "themuuln"
           git config user.email "zerone.offical@gmail.com"
+
+      - name: Install hub
+        run: |
+          curl -L -o hub.tgz https://github.com/github/hub/releases/download/v2.14.2/hub-linux-amd64-2.14.2.tgz
+          tar xvzf hub.tgz
+          sudo ./hub-linux-amd64-2.14.2/install
 
       - name: Create Empty Pull Request
         run: |
@@ -34,6 +40,10 @@ jobs:
           git push origin $branch_name
 
           # Create the pull request
-          hub pull-request -m "Automated Pull Request" -b $branch -h $branch_name
+          pr_url=$(hub pull-request -m "Automated Pull Request" -b $branch -h $branch_name)
+
+          # Merge the pull request
+          hub api -X PUT $pr_url/merge
+
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
