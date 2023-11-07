@@ -13,8 +13,8 @@ jobs:
 
       - name: Set Git User Name and Email
         run: |
-          git config user.name "themuuln"
-          git config user.email "zerone.offical@gmail.com"
+          git config user.name "themuuln"  # Replace with your GitHub username
+          git config user.email "zerone.offical@gmail.com"  # Replace with your GitHub email
 
       - name: Create Empty Pull Request
         run: |
@@ -33,14 +33,14 @@ jobs:
           # Push the new branch to the repository
           git push origin $branch_name
 
-          # Create the pull request using a Personal Access Token
-          pr_url=$(curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" -d '{
+          # Create the pull request using your GitHub credentials
+          pr_url=$(curl -X POST -u "YourGitHubUsername:$PERSONAL_ACCESS_TOKEN" -d '{
             "title": "Automated Pull Request",
             "head": "'$branch_name'",
             "base": "'$branch'"
           }' "https://api.github.com/repos/USERNAME/REPO_NAME/pulls")
 
-          # Merge the pull request (if needed) using the same Personal Access Token
-          curl -X PUT -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" "$pr_url/merge"
+          # Merge the pull request (if needed) using your GitHub credentials
+          curl -X PUT -u "YourGitHubUsername:$PERSONAL_ACCESS_TOKEN" "$pr_url/merge"
         env:
           PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
