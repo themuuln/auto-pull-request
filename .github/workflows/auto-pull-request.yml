@@ -16,12 +16,6 @@ jobs:
           git config user.name "themuuln"
           git config user.email "zerone.offical@gmail.com"
 
-      - name: Install hub
-        run: |
-          curl -L -o hub.tgz https://github.com/github/hub/releases/download/v2.14.2/hub-linux-amd64-2.14.2.tgz
-          tar xvzf hub.tgz
-          sudo ./hub-linux-amd64-2.14.2/install
-
       - name: Create Empty Pull Request
         run: |
           cd $GITHUB_WORKSPACE
@@ -39,10 +33,14 @@ jobs:
           # Push the new branch to the repository
           git push origin $branch_name
 
-          # Create the pull request
-          pr_url=$(hub pull-request -m "Automated Pull Request" -b $branch -h $branch_name)
+          # Create the pull request using a Personal Access Token
+          pr_url=$(curl -X POST -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" -d '{
+            "title": "Automated Pull Request",
+            "head": "'$branch_name'",
+            "base": "'$branch'"
+          }' "https://api.github.com/repos/USERNAME/REPO_NAME/pulls")
 
-          hub api -X PUT $pr_url/merge
-
+          # Merge the pull request (if needed) using the same Personal Access Token
+          curl -X PUT -H "Authorization: token ${{ secrets.PERSONAL_ACCESS_TOKEN }}" "$pr_url/merge"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
